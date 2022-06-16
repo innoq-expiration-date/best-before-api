@@ -1,4 +1,4 @@
-package ch.vshn.hackvision;
+package ch.vshn.hackvision.picture;
 
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
