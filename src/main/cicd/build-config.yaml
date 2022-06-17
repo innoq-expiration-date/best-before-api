@@ -1,0 +1,40 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: 'https://github.com/innoq-expiration-date/best-before-api'
+  name: best-before-api
+  namespace: best-end-api
+  labels:
+    app: best-before-api
+    app.kubernetes.io/component: best-before-api
+    app.kubernetes.io/instance: best-before-api
+    app.kubernetes.io/name: best-before-api
+    app.kubernetes.io/part-of: best-before-api-app
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-17-ubi8
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'best-before-api:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'java:openjdk-17-ubi8'
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/innoq-expiration-date/best-before-api'
+    contextDir: /
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+  runPolicy: Serial
