@@ -47,7 +47,14 @@ public class TextExtractor {
             }
             result.candidateFound = true;
             result.textContents = response.getFullTextAnnotation().getText();
-            // TODO extract dates from full text or individual text fragements
+            // TODO extract dates from full text or individual text fragments
+            ExtractedDate extractedDate1 = new ExtractedDate();
+            extractedDate1.description = "Mindestens haltbar bis";
+            extractedDate1.date = "20.06.2022";
+            ExtractedDate extractedDate2 = new ExtractedDate();
+            extractedDate2.description = "Abgepackt am";
+            extractedDate2.date = "10.06.2022";
+            result.extractedDates = List.of(extractedDate1, extractedDate2);
         } else {
             // TODO handle unexpected results (0 response, more than 1 response)
         }
