@@ -28,6 +28,13 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vision -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-vision</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
