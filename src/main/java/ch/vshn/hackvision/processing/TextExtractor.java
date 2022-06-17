@@ -47,6 +47,7 @@ public class TextExtractor {
             }
             result.candidateFound = true;
             result.textContents = response.getFullTextAnnotation().getText();
+            // TODO extract dates from full text or individual text fragements
         } else {
             // TODO handle unexpected results (0 response, more than 1 response)
         }
