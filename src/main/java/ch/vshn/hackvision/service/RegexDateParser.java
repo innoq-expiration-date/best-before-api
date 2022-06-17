@@ -3,8 +3,6 @@ package ch.vshn.hackvision.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-public class DateParserService{
+public class RegexDateParser implements DateParser {
 
     private static Pattern DATE_PATTERN_1 = Pattern.compile(
             "(0?[1-9]|[12]\\d|30|31)[^\\w\\d\\r\\n:](0?[1-9]|1[0-2])[^\\w\\d\\r\\n:](\\d{4}|\\d{2})");
@@ -29,18 +27,19 @@ public class DateParserService{
     private static Pattern DATE_PATTERN_4 = Pattern.compile(
             "(\\d{4}|\\d{2})[^\\w\\d\\r\\n:](0?[1-9]|1[0-2])");
 
-    public List<String> tryPatterns(String ocrResult) {
+    @Override
+    public List<String> parse(String ocrResult) {
 
-        List<String> result1 = parse(ocrResult, DATE_PATTERN_1);
+        List<String> result1 = parsePattern(ocrResult, DATE_PATTERN_1);
         String reducedOcr = RegExUtils.removeAll(ocrResult, DATE_PATTERN_1);
 
-        List<String> result2 = parse(reducedOcr, DATE_PATTERN_2);
+        List<String> result2 = parsePattern(reducedOcr, DATE_PATTERN_2);
         reducedOcr =RegExUtils.removeAll(ocrResult, DATE_PATTERN_2);
 
-        List<String> result3 = parse(reducedOcr, DATE_PATTERN_3);
+        List<String> result3 = parsePattern(reducedOcr, DATE_PATTERN_3);
         reducedOcr =RegExUtils.removeAll(ocrResult, DATE_PATTERN_3);
 
-        List<String> result4 = parse(reducedOcr, DATE_PATTERN_4);
+        List<String> result4 = parsePattern(reducedOcr, DATE_PATTERN_4);
         reducedOcr =RegExUtils.removeAll(ocrResult, DATE_PATTERN_4);
 
         return Stream.of(result1, result2, result3, result4)
@@ -50,7 +49,7 @@ public class DateParserService{
 
 
 
-    public List<String> parse(String ocrResult, Pattern pattern){
+    private List<String> parsePattern(String ocrResult, Pattern pattern){
 
         Matcher matcher = pattern.matcher(ocrResult);
 

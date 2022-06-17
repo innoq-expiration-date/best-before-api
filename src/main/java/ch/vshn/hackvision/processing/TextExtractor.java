@@ -1,6 +1,6 @@
 package ch.vshn.hackvision.processing;
 
-import ch.vshn.hackvision.service.DateParserService;
+import ch.vshn.hackvision.service.DateParser;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
@@ -23,7 +23,7 @@ public class TextExtractor {
     private ImageAnnotatorClient client;
 
     @Inject
-    DateParserService dateParserService;
+    DateParser dateParser;
 
     public TextExtractor() throws IOException {
         client = ImageAnnotatorClient.create();
@@ -54,7 +54,7 @@ public class TextExtractor {
             result.candidateFound = true;
             result.textContents = response.getFullTextAnnotation().getText();
             // TODO extract dates from full text or individual text fragments
-            List<String> dates = dateParserService.tryPatterns(result.textContents);
+            List<String> dates = dateParser.parse(result.textContents);
             result.extractedDates = dates
                     .stream()
                     .map(s -> new ExtractedDate("", s))
