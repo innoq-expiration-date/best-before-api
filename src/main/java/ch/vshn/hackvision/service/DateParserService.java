@@ -1,6 +1,7 @@
 package ch.vshn.hackvision.service;
 
 
+import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@ApplicationScoped
 public class DateParserService{
 
     private static Pattern DATE_PATTERN_1 = Pattern.compile(
