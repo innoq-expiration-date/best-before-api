@@ -8,6 +8,7 @@ import org.jboss.resteasy.reactive.MultipartForm;
 import org.jboss.resteasy.reactive.RestPath;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,25 +19,20 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@Path("/pictures")
+@Path("/picture")
 @ApplicationScoped
 public class PictureResource {
 
-    @GET
-    public Uni<List<Picture>> get() {
-        return Picture.listAll();
-    }
+    public static final String MD_5 = "MD5";
 
-    @GET
-    @Path("/{id}")
-    public Uni<Picture> findById(Long id) {
-        return Picture.findById(id);
-    }
+    @Inject
+
+
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Uni<Response> create(@MultipartForm MultipartBody multipartBody) throws IOException, NoSuchAlgorithmException {
-        MessageDigest md5Digest = MessageDigest.getInstance("MD5");
+    public Response create(@MultipartForm MultipartBody multipartBody) throws IOException, NoSuchAlgorithmException {
+        MessageDigest md5Digest = MessageDigest.getInstance(MD_5);
         Picture picture = new Picture();
 
         byte[] bytesOfImage = Files.readAllBytes(multipartBody.image.toPath());
@@ -44,35 +40,10 @@ public class PictureResource {
         picture.hash = String.valueOf(md5Digest.digest(bytesOfImage));
         picture.image = ArrayUtils.toObject(bytesOfImage);
 
-        return Panache.<Picture>withTransaction(picture::persist)
-                .onItem()
-                .transform(inserted ->
-                        Response.created(
-                                URI.create("/pictures/" + inserted.id)
-                        ).build());
+
+
+        return Response.accepted().build();
     }
 
 
-    @PUT
-    @Path("{id}")
-    public Uni<Response> update(@RestPath Long id, Picture picture) {
-        if (picture == null || picture.hash == null) {
-            throw new WebApplicationException("Picture should have a firstname and a lastname", 422);
-        }
-
-        return Panache.withTransaction(() -> Picture.<Picture>findById(id)
-                        .onItem().ifNotNull()
-                        .invoke(entity -> entity.hash = picture.hash)                        
-                .onItem().ifNotNull().transform(entity -> Response.ok(entity).build())
-                .onItem().ifNull().continueWith(Response.ok().status(Response.Status.NOT_FOUND)::build));
-    }
-
-    @DELETE
-    @Path("{id}")
-    public Uni<Response> delete(@RestPath Long id) {
-        return Panache.withTransaction(() -> Picture.deleteById(id))
-                .map(deleted ->
-                        deleted ? Response.ok().status(Response.Status.NO_CONTENT).build()
-                                : Response.ok().status(Response.Status.NOT_FOUND).build());
-    }
 }
