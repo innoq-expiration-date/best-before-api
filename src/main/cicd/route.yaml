@@ -1,0 +1,27 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: best-before-api
+  namespace: best-end-api
+  labels:
+    app: best-before-api
+    app.kubernetes.io/component: best-before-api
+    app.kubernetes.io/instance: best-before-api
+    app.kubernetes.io/name: best-before-api
+    app.kubernetes.io/part-of: best-before-api-app
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-17-ubi8
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: best-before-api-best-end-api.apps.ocp4.klaassen.click
+  to:
+    kind: Service
+    name: best-before-api
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
